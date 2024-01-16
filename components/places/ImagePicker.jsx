@@ -3,10 +3,14 @@ import {
   launchCameraAsync,
   useCameraPermissions,
 } from "expo-image-picker";
-import React from "react";
-import { Alert, Button, View } from "react-native";
+import React, { useState } from "react";
+import { Alert, Button, Image, StyleSheet, View } from "react-native";
+import OutlineButton from "../ui/OutlineButton";
+import { Colors } from "../../constants/colors";
 
 const ImagePicker = () => {
+  const [pickedImage, setPickedImage] = useState(null);
+
   const [cameraPermissionStatus, requestPermission] = useCameraPermissions();
 
   const verifyPermissions = async () => {
@@ -35,15 +39,34 @@ const ImagePicker = () => {
       aspect: [16, 9],
       quality: 0.5,
     });
-    console.log(image);
+    console.log("image.uri", image.uri);
+    setPickedImage(image.uri);
   };
 
   return (
     <View>
-      <View></View>
-      <Button title="Take Image" onPress={takeImageHandler} />
+      <View>
+        {pickedImage && (
+          <Image style={styles.imagePreview} source={{ uri: pickedImage }} />
+        )}
+      </View>
+      <OutlineButton onPress={takeImageHandler} icon="camera">
+        Take Image
+      </OutlineButton>
     </View>
   );
 };
 
 export default ImagePicker;
+
+const styles = StyleSheet.create({
+  imagePreview: {
+    width: "100%",
+    height: 200,
+    marginVertical: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.primary100,
+    borderRadius: 4,
+  },
+});
